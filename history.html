@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History</title>
+</head>
+<body>
+    <h2>Contest History</h2>
+    <?php
+    include 'db.php';
+    $contests = $conn->query("SELECT * FROM contests ORDER BY date DESC");
+    while ($contest = $contests->fetch_assoc()) {
+        echo '<h3>'.$contest['type'].' on '.$contest['date'].'</h3>';
+        $contest_id = $contest['id'];
+        $results = $conn->query("SELECT swimmers.firstname, swimmers.lastname, results.time_spent 
+                                 FROM results 
+                                 JOIN swimmers ON results.swimmer_id = swimmers.id 
+                                 WHERE results.contest_id = $contest_id 
+                                 ORDER BY results.time_spent ASC");
+        while ($row = $results->fetch_assoc()) {
+            echo $row['firstname'].' '.$row['lastname'].' - '.$row['time_spent'].' seconds<br>';
+        }
+    }
+    ?>
+</body>
+</html>
